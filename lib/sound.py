@@ -39,4 +39,4 @@ class Sound(object):
 if __name__ == "__main__":
     s = Sound()
     s.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_iat.pcm')
-    s.text2sound(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm', text='达达利亚')
+    s.text2sound(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm', text='这是1个文本转语音示例。')
