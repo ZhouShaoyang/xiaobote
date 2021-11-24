@@ -71,55 +71,56 @@ class Ws_Param(object):
         return url
 
 
-def on_message(ws, message):
-    try:
-        message = json.loads(message)
-        code = message["code"]
-        sid = message["sid"]
-        audio = message["data"]["audio"]
-        audio = base64.b64decode(audio)
-        status = message["data"]["status"]
-        print(message)
-        if status == 2:
-            print("ws is closed")
-            ws.close()
-        if code != 0:
-            errMsg = message["message"]
-            print("sid:%s call error:%s code is:%s" % (sid, errMsg, code))
-        else:
+class WS(object):
+    def __init__(self, wsParam):
+        self.wsParam = wsParam
 
-            with open(wsParam.AudioFile, 'ab') as f:
-                f.write(audio)
+    def on_message(self, ws, message):
+        try:
+            message = json.loads(message)
+            code = message["code"]
+            sid = message["sid"]
+            audio = message["data"]["audio"]
+            audio = base64.b64decode(audio)
+            status = message["data"]["status"]
+            print(message)
+            if status == 2:
+                print("ws is closed")
+                ws.close()
+            if code != 0:
+                errMsg = message["message"]
+                print("sid:%s call error:%s code is:%s" % (sid, errMsg, code))
+            else:
 
-    except Exception as e:
-        print("receive msg,but parse exception:", e)
+                with open(self.wsParam.AudioFile, 'ab') as f:
+                    f.write(audio)
 
+        except Exception as e:
+            print("receive msg,but parse exception:", e)
 
-# 收到websocket错误的处理
-def on_error(ws, error):
-    print("### error:", error)
+    # 收到websocket错误的处理
+    def on_error(self, ws, error):
+        print("### error:", error)
 
+    # 收到websocket关闭的处理
+    def on_close(self, ws):
+        print("### closed ###")
 
-# 收到websocket关闭的处理
-def on_close(ws):
-    print("### closed ###")
+    # 收到websocket连接建立的处理
+    def on_open(self, ws):
+        def run(*args):
+            d = {
+                "common": self.wsParam.CommonArgs,
+                "business": self.wsParam.BusinessArgs,
+                "data": self.wsParam.Data,
+            }
+            d = json.dumps(d)
+            print("------>开始发送文本数据")
+            ws.send(d)
+            if os.path.exists(self.wsParam.AudioFile):
+                os.remove(self.wsParam.AudioFile)
 
-
-# 收到websocket连接建立的处理
-def on_open(ws):
-    def run(*args):
-        d = {
-            "common": wsParam.CommonArgs,
-            "business": wsParam.BusinessArgs,
-            "data": wsParam.Data,
-        }
-        d = json.dumps(d)
-        print("------>开始发送文本数据")
-        ws.send(d)
-        if os.path.exists(wsParam.AudioFile):
-            os.remove(wsParam.AudioFile)
-
-    thread.start_new_thread(run, ())
+        thread.start_new_thread(run, ())
 
 
 if __name__ == "__main__":
@@ -129,8 +130,9 @@ if __name__ == "__main__":
                        APIKey='a7c4a7ff3a585b31d60f5ded99526354',
                        Text="这是一个语音合成示例",
                        AudioFile=f'{os.getcwd()}/data/sound/demo_tts.pcm')
+    ws = WS(wsParam=wsParam)
     websocket.enableTrace(False)
     wsUrl = wsParam.create_url()
-    ws = websocket.WebSocketApp(wsUrl, on_message=on_message, on_error=on_error, on_close=on_close)
-    ws.on_open = on_open
-    ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+    websock = websocket.WebSocketApp(wsUrl, on_message=ws.on_message, on_error=ws.on_error, on_close=ws.on_close)
+    websock.on_open = ws.on_open
+    websock.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
