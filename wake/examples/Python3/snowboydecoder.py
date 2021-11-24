@@ -2,7 +2,7 @@
 
 import collections
 import pyaudio
-import snowboydetect
+from wake.examples.Python3 import snowboydetect
 import time
 import wave
 import os

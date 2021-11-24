@@ -15,7 +15,7 @@ from util import iat
 from util import tts
 
 
-class Sound(object):
+class AiSound(object):
     def __init__(self):
         self.AppId = 'a28fc810'
         self.APISecret = 'YWJkMDlmZmFlMDIxY2Y0ODE5MGJiMjAw'
@@ -55,7 +55,7 @@ class Sound(object):
         return True
 
     def record(self, audiofile):
-        recordtime = 5
+        recordtime = 3
         player = pyaudio.PyAudio()
         stream = player.open(format=pyaudio.paInt16,
                              channels=1,
@@ -94,11 +94,23 @@ class Sound(object):
 
 
 if __name__ == "__main__":
-    s = Sound()
-    print(s.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_iat.pcm'))
-    s.text2sound(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm',
-                 text='这是1个文本转语音示例。')
-    s.play(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm')
-    s.record(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
-    s.play(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
-    print(s.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm'))
+    ais = AiSound()
+    # print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_iat.pcm'))
+    # ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm',
+    #              text='这是1个文本转语音示例。')
+    # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm')
+    # ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
+    # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
+    # print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm'))
+
+    # ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm')
+    # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm')
+    # print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm'))
+
+    # ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm')
+    # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm')
+    # print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm'))
+
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm')
+    ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm')
+    print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm'))
