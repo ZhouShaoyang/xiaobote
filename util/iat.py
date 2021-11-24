@@ -69,6 +69,7 @@ class Ws_Param(object):
 class WS(object):
     def __init__(self, wsParam):
         self.wsParam = wsParam
+        self.result = ""
 
     # 收到websocket消息的处理
     def on_message(self, ws, message):
@@ -82,11 +83,11 @@ class WS(object):
             else:
                 data = json.loads(message)["data"]["result"]["ws"]
                 # print(json.loads(message))
-                result = ""
                 for i in data:
                     for w in i["cw"]:
-                        result += w["w"]
+                        self.result += w["w"]
                 print("sid:%s call success!,data is:%s" % (sid, json.dumps(data, ensure_ascii=False)))
+                return self.result
         except Exception as e:
             print("receive msg,but parse exception:", e)
 
