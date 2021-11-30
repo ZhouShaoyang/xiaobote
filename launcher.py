@@ -16,71 +16,9 @@ from config import page
 from lib import aitime
 from lib import aiweather
 from lib.aisound import AiSound
-
-from pypinyin import lazy_pinyin as py
-from pypinyin.style._utils import get_initials
-import itertools
-
-sys.path.append(os.getcwd())
+from lib.aimodule import AiModule
 
 log = Logger()
-ais = AiSound()
-
-class DFAFilter(object):
-    def __init__(self):
-        self.keyword_chains = {}  # 关键词链表
-        self.delimit = '\x00'  # 限定
-
-    def add(self, keyword):
-        keyword = keyword.lower()  # 关键词英文变为小写
-        chars = keyword.strip()  # 关键字去除首尾空格和换行
-        if not chars:  # 如果关键词为空直接返回
-            return
-        level = self.keyword_chains
-        # 遍历关键字的每个字
-        for i in range(len(chars)):
-            # 如果这个字已经存在字符链的key中就进入其子字典
-            if chars[i] in level:
-                level = level[chars[i]]
-            else:
-                if not isinstance(level, dict):
-                    break
-                for j in range(i, len(chars)):
-                    level[chars[j]] = {}
-                    last_level, last_char = level, chars[j]
-                    level = level[chars[j]]
-                last_level[last_char] = {self.delimit: 0}
-                break
-        if i == len(chars) - 1:
-            level[self.delimit] = 0
-
-    def parse(self, path):
-        with open(path, encoding='utf-8') as f:
-            for keyword in f:
-                self.add(str(keyword).strip())
-
-    def filter(self, message, repl="*"):
-        message = message.lower()
-        ret = []
-        start = 0
-        while start < len(message):
-            level = self.keyword_chains
-            step_ins = 0
-            for char in message[start:]:
-                if char in level:
-                    step_ins += 1
-                    if self.delimit not in level[char]:
-                        level = level[char]
-                    else:
-                        ret.append(message[start:start+step_ins])
-                        start += step_ins - 1
-                        break
-                else:
-                    break
-            else:
-                ret.append(message[start])
-            start += 1
-        return ret
 
 
 class Browser(object):
@@ -99,50 +37,23 @@ class Browser(object):
             log.error(message=f'ope {page} {err}')
 
 
+ais = AiSound()
+aimod_date = AiModule(module='日期')
+aimod_week = AiModule(module='星期')
+aimod_time = AiModule(module='时间')
+aimod_weather = AiModule(module='天气')
+aimod_cale_day = AiModule(module='日历')
+aimod_cale_week = AiModule(module='周历')
+aimod_cale_month = AiModule(module='月历')
+aimod_essay = AiModule(module='随笔')
+aimod_poster = AiModule(module='海报')
+aimod_bv = AiModule(module='分析师')
+aimod_exit = AiModule(module='退出')
+aimod_reboot = AiModule(module='重启')
+aimod_poweroff = AiModule(module='关机')
 browser = Browser()
 browser.open(page.month_all)
-dfa_zl = DFAFilter()
-dfa_zl.parse(f"{os.getcwd}/data/keywords/calender.txt")
 
-def dimTone(oriTone):
-    # 模糊音
-    sm = get_initials(oriTone, '_INITIALS_NOT_STRICT')
-    ym = oriTone[len(sm):]
-    d1, d2, d3 = ['zh', 'z'], ['ch', 'c'], ['sh', 's']
-    d4, d5, d6 = ['n', 'l', 'r'], ['ang', 'an'], ['eng', 'en']
-    d7, d8, d9 = ['ing', 'in'], ['f', 'h'], ['wang', 'huang']
-    if oriTone in d9:
-        return d9
-    elif sm in d1:
-        return [it + ym for it in d1]
-    elif sm in d2:
-        return [it + ym for it in d2]
-    elif sm in d3:
-        return [it + ym for it in d3]
-    elif sm in d4:
-        return [it + ym for it in d4]
-    elif sm in d8:
-        return [it + ym for it in d8]
-    elif ym in d5:
-        return [sm + it for it in d5]
-    elif ym in d6:
-        return [sm + it for it in d6]
-    elif ym in d7:
-        return [sm + it for it in d7]
-    else:
-        return [oriTone]
-
-def check(recRes):
-    # 如果命中返回True，反之False
-    oriPy, final = py(recRes), []
-    for it in oriPy:
-        final.append(dimTone(it))
-    final = itertools.product(*final)  # 星号不能忽略
-    final = "".join([''.join(it) for it in final])
-    if dfa_zl.filter(final):
-        return True
-    else:
-        return False
 
 def signal_handler(signal, frame):
     global interrupted
@@ -156,63 +67,77 @@ def interrupt_callback():
 
 def loop():
     snowboydecoder.play_audio_file()
-    browser.open(page.month_wait)
+    browser.open(page.detail)
     ais.record(audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm')
     order_deep1 = ais.sound2text(
         audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm')
-    if '报日期' in order_deep1:
+    # 日期模块
+    if aimod_date.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aitime.get_date())
-        browser.open(page.month_all)
+        browser.open(page.detail)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
-    elif '报星期' in order_deep1:
+    # 星期模块
+    elif aimod_week.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aitime.get_week())
-        browser.open(page.month_all)
+        browser.open(page.detail)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
-    elif '报时间' in order_deep1:
+    # 时间模块
+    elif aimod_time.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aitime.get_time())
-        browser.open(page.month_all)
+        browser.open(page.detail)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
-    elif '报天气' in order_deep1:
+    # 天气模块
+    elif aimod_weather.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aiweather.get_weather())
         browser.open(page.month_all)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
-    elif '打开随笔' in order_deep1 or '打开水笔' in order_deep1:
+    # 日历模块
+    elif aimod_cale_week.check(order_deep1):
+        browser.open(page.detail)
+    # 周历模块
+    elif aimod_cale_week.check(order_deep1):
+        browser.open(page.week_all)
+    # 月历模块
+    elif aimod_cale_month.check(order_deep1):
+        browser.open(page.month_all)
+    # 随笔模块
+    elif aimod_essay.check(order_deep1):
         browser.open(page=page.essay_entry)
         time.sleep(5)
         browser.open(page=page.module_wait)
         time.sleep(5)
         browser.open(page=page.essay_result)
-    elif '打开海报' in order_deep1:
+    # 海报模块
+    elif aimod_poster.check(order_deep1):
         browser.open(page=page.post_entry)
         time.sleep(5)
         browser.open(page=page.module_wait)
         time.sleep(5)
         browser.open(page=page.post_result)
-    elif '打开分析师' in order_deep1:
+    # 分析师模块
+    elif aimod_bv.check(order_deep1):
         browser.open(page=page.bv_entry)
         time.sleep(5)
         browser.open(page=page.module_wait)
         time.sleep(5)
         browser.open(page=page.bv_result)
-    elif '打开周历' in order_deep1 or '打开周丽' in order_deep1:
-        browser.open(page.week_all)
-    elif '回到主页' in order_deep1:
-        browser.open(page.month_all)
-    elif '关机' in order_deep1:
-        os.system(command='sudo poweroff')
-    elif '重启' in order_deep1:
+    # 退出模块
+    elif aimod_exit.check(order_deep1):
+        browser.open(page.detail)
+    # 重启模块
+    elif aimod_reboot.check(order_deep1):
         os.system(command='sudo reboot')
+    # 关机模块
+    elif aimod_poweroff.check(order_deep1):
+        os.system(command='sudo poweroff')
+    # 异常重试模块
     else:
         ais.play(audiofile=f'{os.getcwd()}/data/sound/error.pcm')
         browser.open(page.month_all)
-    # 示例
-    if check("周历"):
-        browser.open(page.week_all)
-
 
 
 interrupted = False
