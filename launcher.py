@@ -17,10 +17,70 @@ from lib import aitime
 from lib import aiweather
 from lib.aisound import AiSound
 
+from pypinyin import lazy_pinyin as py
+from pypinyin.style._utils import get_initials
+import itertools
+
 sys.path.append(os.getcwd())
 
 log = Logger()
 ais = AiSound()
+
+class DFAFilter(object):
+    def __init__(self):
+        self.keyword_chains = {}  # 关键词链表
+        self.delimit = '\x00'  # 限定
+
+    def add(self, keyword):
+        keyword = keyword.lower()  # 关键词英文变为小写
+        chars = keyword.strip()  # 关键字去除首尾空格和换行
+        if not chars:  # 如果关键词为空直接返回
+            return
+        level = self.keyword_chains
+        # 遍历关键字的每个字
+        for i in range(len(chars)):
+            # 如果这个字已经存在字符链的key中就进入其子字典
+            if chars[i] in level:
+                level = level[chars[i]]
+            else:
+                if not isinstance(level, dict):
+                    break
+                for j in range(i, len(chars)):
+                    level[chars[j]] = {}
+                    last_level, last_char = level, chars[j]
+                    level = level[chars[j]]
+                last_level[last_char] = {self.delimit: 0}
+                break
+        if i == len(chars) - 1:
+            level[self.delimit] = 0
+
+    def parse(self, path):
+        with open(path, encoding='utf-8') as f:
+            for keyword in f:
+                self.add(str(keyword).strip())
+
+    def filter(self, message, repl="*"):
+        message = message.lower()
+        ret = []
+        start = 0
+        while start < len(message):
+            level = self.keyword_chains
+            step_ins = 0
+            for char in message[start:]:
+                if char in level:
+                    step_ins += 1
+                    if self.delimit not in level[char]:
+                        level = level[char]
+                    else:
+                        ret.append(message[start:start+step_ins])
+                        start += step_ins - 1
+                        break
+                else:
+                    break
+            else:
+                ret.append(message[start])
+            start += 1
+        return ret
 
 
 class Browser(object):
@@ -41,7 +101,48 @@ class Browser(object):
 
 browser = Browser()
 browser.open(page.month_all)
+dfa_zl = DFAFilter()
+dfa_zl.parse(f"{os.getcwd}/data/keywords/calender.txt")
 
+def dimTone(oriTone):
+    # 模糊音
+    sm = get_initials(oriTone, '_INITIALS_NOT_STRICT')
+    ym = oriTone[len(sm):]
+    d1, d2, d3 = ['zh', 'z'], ['ch', 'c'], ['sh', 's']
+    d4, d5, d6 = ['n', 'l', 'r'], ['ang', 'an'], ['eng', 'en']
+    d7, d8, d9 = ['ing', 'in'], ['f', 'h'], ['wang', 'huang']
+    if oriTone in d9:
+        return d9
+    elif sm in d1:
+        return [it + ym for it in d1]
+    elif sm in d2:
+        return [it + ym for it in d2]
+    elif sm in d3:
+        return [it + ym for it in d3]
+    elif sm in d4:
+        return [it + ym for it in d4]
+    elif sm in d8:
+        return [it + ym for it in d8]
+    elif ym in d5:
+        return [sm + it for it in d5]
+    elif ym in d6:
+        return [sm + it for it in d6]
+    elif ym in d7:
+        return [sm + it for it in d7]
+    else:
+        return [oriTone]
+
+def check(recRes):
+    # 如果命中返回True，反之False
+    oriPy, final = py(recRes), []
+    for it in oriPy:
+        final.append(dimTone(it))
+    final = itertools.product(*final)  # 星号不能忽略
+    final = "".join([''.join(it) for it in final])
+    if dfa_zl.filter(final):
+        return True
+    else:
+        return False
 
 def signal_handler(signal, frame):
     global interrupted
@@ -108,6 +209,10 @@ def loop():
     else:
         ais.play(audiofile=f'{os.getcwd()}/data/sound/error.pcm')
         browser.open(page.month_all)
+    # 示例
+    if check("周历"):
+        browser.open(page.week_all)
+
 
 
 interrupted = False
