@@ -1,15 +1,14 @@
 FROM ubuntu:16.04
 
-RUN apt update && apt --yes --force-yes install wget unzip build-essential python python-dev virtualenv portaudio19-dev
-RUN wget https://github.com/seasalt-ai/snowboy/archive/master.zip && unzip master.zip
+RUN sed -i s@/ports.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \ 
+    && apt update \
+    && apt -y install wget unzip build-essential python python-dev python-pip portaudio19-dev
 
-RUN cd snowboy-master/ && \
-    virtualenv -p python2 venv/snowboy && \
-    . venv/snowboy/bin/activate && \
-    cd examples/Python && \
-    pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-RUN apt -y remove wget unzip build-essential portaudio19-dev && apt -y autoremove && apt clean && rm -rf /var/lib/apt/lists/*
+RUN cd root/ \
+    && wget https://github.com/seasalt-ai/snowboy/archive/master.zip && unzip master.zip \
+    && cd snowboy-master \
+    && cd examples/Python \
+    && pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 CMD cd snowboy-master/ && \
     . venv/snowboy/bin/activate && \
