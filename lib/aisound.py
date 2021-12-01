@@ -35,6 +35,7 @@ class AiSound(object):
                                          on_close=ws.on_close)
         websock.on_open = ws.on_open
         websock.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+        print(ws.result)
         return ws.result
 
     def text2sound(self, audiofile, text):
@@ -54,8 +55,7 @@ class AiSound(object):
         websock.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
         return True
 
-    def record(self, audiofile):
-        recordtime = 3
+    def record(self, audiofile, recordtime):
         player = pyaudio.PyAudio()
         stream = player.open(format=pyaudio.paInt16,
                              channels=1,
@@ -95,22 +95,23 @@ class AiSound(object):
 
 if __name__ == "__main__":
     ais = AiSound()
-    print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_iat.pcm'))
+    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_iat.pcm')
     ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm',
-                 text='这是1个文本转语音示例。')
+                   text='这是1个文本转语音示例。')
     ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm')
-    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm',
+               recordtime=2)
     ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
-    print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm'))
+    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
 
-    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm')
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm', recordtime=2)
     ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm')
-    print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm'))
+    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm')
 
-    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm')
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm', recordtime=2)
     ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm')
-    print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm'))
+    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_周历.pcm')
 
-    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm')
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm', recordtime=2)
     ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm')
-    print(ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm'))
+    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_随笔.pcm')

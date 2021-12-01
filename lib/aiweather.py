@@ -26,7 +26,7 @@ def get_weather():
     now = response.get('wendu')
     wind = detail.get('fengxiang')
     health = response.get('ganmao')
-    text = f'今日天气，{sun}，最{high}度，最{low}度，当前{now}度，{wind}，外出建议{health}'
+    text = f'今日天气，{sun}，最{high}度，最{low}度，当前{now}度，{wind}，{health}'
     print(text)
     return text
 

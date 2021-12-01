@@ -45,14 +45,21 @@ aimod_weather = AiModule(module='天气')
 aimod_cale_day = AiModule(module='日历')
 aimod_cale_week = AiModule(module='周历')
 aimod_cale_month = AiModule(module='月历')
+aimod_list = AiModule(module='导航')
+aimod_list = AiModule(module='目录')
 aimod_essay = AiModule(module='随笔')
 aimod_poster = AiModule(module='海报')
 aimod_bv = AiModule(module='分析师')
 aimod_exit = AiModule(module='退出')
 aimod_reboot = AiModule(module='重启')
 aimod_poweroff = AiModule(module='关机')
+
+aimod_demo_essay_lbxygsn = AiModule(module='示例-随笔-蓝标下一个十年')
+aimod_demo_essay_qtyyzsd = AiModule(module='示例-随笔-倾听元宇宙时代')
+aimod_demo_essay_qselzn = AiModule(module='示例-随笔-恰似而立之年')
+
 browser = Browser()
-browser.open(page.month_all)
+browser.open(page.cale_day)
 
 
 def signal_handler(signal, frame):
@@ -66,44 +73,48 @@ def interrupt_callback():
 
 
 def loop():
+    # 播放识别音，打开听取页面
     snowboydecoder.play_audio_file()
-    browser.open(page.detail)
-    ais.record(audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm')
+    browser.open(page.listening)
+    # 记录听取内容
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm', recordtime=2)
     order_deep1 = ais.sound2text(
         audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm')
     # 日期模块
     if aimod_date.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aitime.get_date())
-        browser.open(page.detail)
+        browser.open(page.cale_day)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
     # 星期模块
     elif aimod_week.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aitime.get_week())
-        browser.open(page.detail)
+        browser.open(page.cale_day)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
     # 时间模块
     elif aimod_time.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aitime.get_time())
-        browser.open(page.detail)
+        browser.open(page.cale_day)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
     # 天气模块
     elif aimod_weather.check(order_deep1):
         ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm',
                        text=aiweather.get_weather())
-        browser.open(page.month_all)
+        browser.open(page.cale_day)
         ais.play(audiofile=f'{os.getcwd()}/data/sound/exec_deep1.pcm')
     # 日历模块
     elif aimod_cale_week.check(order_deep1):
-        browser.open(page.detail)
+        browser.open(page.cale_day)
     # 周历模块
     elif aimod_cale_week.check(order_deep1):
-        browser.open(page.week_all)
+        browser.open(page.cale_week)
     # 月历模块
     elif aimod_cale_month.check(order_deep1):
-        browser.open(page.month_all)
+        browser.open(page.cale_month)
+    # 目录模块
+    elif aimod_cal
     # 随笔模块
     elif aimod_essay.check(order_deep1):
         browser.open(page=page.essay_entry)
