@@ -12,7 +12,7 @@ from pypinyin.style._utils import get_initials
 
 class AiModule(object):
     """
-    :Module: 日期,星期,时间,天气,日历,周历,月历,随笔,海报,分析师,退出,重启,关机
+    :Module: 日期,星期,时间,天气,日历,周历,月历,菜单,随笔,海报,分析师,退出,重启,关机
     """
     def __init__(self, module):
         self.module = module
@@ -74,8 +74,7 @@ class AiModule(object):
             final.append(self.dimTone(it))
         final = itertools.product(*final)  # 星号不能忽略
         final = ",".join([''.join(it) for it in final])
-        if DFAFilter(self.module_keywords_mapping.get(
-                self.module)).filter(final):
+        if DFAFilter(self.module_keywords_mapping.get(self.module)).filter(final):
             return True
         else:
             return False
