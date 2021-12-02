@@ -154,7 +154,7 @@ def loop():
 
 
 interrupted = False
-model = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan.umdl'
+model = f'{os.getcwd()}/data/model/wake-snowboy.umdl'
 signal.signal(signal.SIGINT, signal_handler)
 detector = snowboydecoder.HotwordDetector(model, sensitivity=0.5)
 
