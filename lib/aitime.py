@@ -15,13 +15,13 @@ def get_date():
 
 
 def get_week():
-    text = time.strftime('本周是全年第%W周', time.localtime())
+    text = time.strftime('今天是周%w，本周是全年第%W周', time.localtime())
     print(text)
     return text
 
 
 def get_time():
-    text = time.strftime('当前时间是%H时%M分', time.localtime())
+    text = time.strftime('现在时间是%H时%M分', time.localtime())
     print(text)
     return text
 
