@@ -114,30 +114,28 @@ def loop():
     # 随笔模块
     elif aimod_essay.check(order_deep1):
         browser.open(page.essay)
-        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_essay.pcm', recordtime=2)
+        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_essay.pcm', recordtime=3)
         browser.open(page.loading)
         order_essay = ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/order_essay.pcm')
         if aimod_demo_essay_lbxygsn.check(order_essay):
-            browser.open(page.essay_result)
+            browser.open(page.demo_essay_lbxygsn)
         elif aimod_demo_essay_qtyyzsd.check(order_essay):
-            browser.open(page.essay_result)
+            browser.open(page.demo_essay_qtyyzsd)
         elif aimod_demo_essay_qselzn.check(order_essay):
-            browser.open(page.essay_result)
+            browser.open(page.demo_essay_qselzn)
         else:
-            requests.get('https://www.baidu.com')
+            requests.get(page.essay_api)
             browser.open(page.essay_result)
     # 海报模块
     elif aimod_poster.check(order_deep1):
         browser.open(page.poster)
-        time.sleep(3)
+        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_poster.pcm', recordtime=3)
         browser.open(page.loading)
-        time.sleep(3)
+        requests.get(page.poster_api)
         browser.open(page.poster_result)
     # 分析师模块
     elif aimod_bv.check(order_deep1):
         browser.open(page.bv)
-        time.sleep(3)
-        browser.open(page.loading)
         time.sleep(3)
         browser.open(page.bv_result)
     # 退出模块
