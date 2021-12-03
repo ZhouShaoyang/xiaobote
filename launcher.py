@@ -59,7 +59,7 @@ aimod_demo_essay_qtyyzsd = AiModule(module='示例-随笔-倾听元宇宙时代'
 aimod_demo_essay_qselzn = AiModule(module='示例-随笔-恰似而立之年')
 
 browser = Browser()
-browser.open(page.cale_month)
+browser.open('http://localhost:9527/')
 
 
 def signal_handler(signal, frame):
