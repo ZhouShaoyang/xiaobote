@@ -5,35 +5,36 @@ import sys
 
 sys.path.append(os.getcwd())
 
-
 from wake.examples.Python3 import snowboydecoder
-import sys
-import signal
+import wave
 
-interrupted = False
+# Demo code for detecting hotword in a .wav file
+# Example Usage:
+#  $ python demo3.py resources/snowboy.wav resources/models/snowboy.umdl
+# Should print:
+#  Hotword Detected!
+#
+#  $ python demo3.py resources/ding.wav resources/models/snowboy.umdl
+# Should print:
+#  Hotword Not Detected!
 
+wave_file = f'{os.getcwd()}/data/sound/wake-xiaolanxiaolan.wav'
+model_file = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan.umdl'
 
-def signal_handler(signal, frame):
-    global interrupted
-    interrupted = True
+f = wave.open(wave_file)
+assert f.getnchannels() == 1, "Error: Snowboy only supports 1 channel of audio (mono, not stereo)"
+assert f.getframerate() == 16000, "Error: Snowboy only supports 16K sampling rate"
+assert f.getsampwidth() == 2, "Error: Snowboy only supports 16bit per sample"
+data = f.readframes(f.getnframes())
+f.close()
 
+sensitivity = 0.5
+detection = snowboydecoder.HotwordDetector(model_file, sensitivity=sensitivity)
 
-def interrupt_callback():
-    global interrupted
-    return interrupted
+ans = detection.detector.RunDetection(data)
 
+if ans == 1:
+    print('Hotword Detected!')
+else:
+    print('Hotword Not Detected!')
 
-model = f'{os.getcwd()}/data/model/wake-snowboy.umdl'
-
-# capture SIGINT signal, e.g., Ctrl+C
-signal.signal(signal.SIGINT, signal_handler)
-
-detector = snowboydecoder.HotwordDetector(model, sensitivity=0.5)
-print('Listening... Press Ctrl+C to exit')
-
-# main loop
-detector.start(detected_callback=snowboydecoder.play_audio_file,
-               interrupt_check=interrupt_callback,
-               sleep_time=0.03)
-
-detector.terminate()
