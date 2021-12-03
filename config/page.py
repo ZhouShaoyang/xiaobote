@@ -33,7 +33,7 @@ if mode == 'FAKE':
     poster_api = 'http://www.baidu.com'
 
 elif mode == 'REAL':
-    domain = 'http://192.168.100.200:9527/#/'
+    domain = 'http://127.0.0.1:9527/#/'
     cale_day = f'{domain}Details'
     cale_week = f'{domain}Week'
     cale_month = f'{domain}'
