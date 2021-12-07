@@ -27,7 +27,7 @@ model = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan.umdl'
 # capture SIGINT signal, e.g., Ctrl+C
 signal.signal(signal.SIGINT, signal_handler)
 
-detector = snowboydecoder.HotwordDetector(model, sensitivity=0.68)
+detector = snowboydecoder.HotwordDetector(model, sensitivity=0.65)
 print('Listening... Press Ctrl+C to exit')
 
 # main loop

@@ -6,6 +6,7 @@ import sys
 sys.path.append(os.getcwd())
 
 mode = 'REAL'
+web = 'OFFLINE'
 
 if mode == 'FAKE':
     # 本地假链接
@@ -40,6 +41,7 @@ elif mode == 'REAL':
     cale_month_day = f'{domain}'
     cale_month_opt = f'{domain}'
 
+    littleblueman = f'{domain}LittleBlueMan'
     listening = f'{domain}Awaken'
     loading = f'{domain}Loaded'
 

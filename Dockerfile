@@ -9,4 +9,4 @@ RUN cd root/ \
     && wget https://github.com/seasalt-ai/snowboy/archive/master.zip && unzip master.zip \
     && cd snowboy-master/examples/Python/ \
 
-CMD python generate_pmdl.py -r1=model/record1.wav -r2=model/record2.wav -r3=model/record3.wav -lang=en -n=model/hotword.pmdl
+CMD python generate_pmdl.py -r1=model/record1.wav -r2=model/record2.wav -r3=model/record3.wav -lang=en -n=model/wake-xiaolanxiaolan-honglei.umdl
