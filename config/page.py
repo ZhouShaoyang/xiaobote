@@ -6,7 +6,7 @@ import sys
 sys.path.append(os.getcwd())
 
 mode = 'REAL'
-web = 'OFFLINE'
+web = 'ONLINE'
 
 if mode == 'FAKE':
     # 本地假链接
