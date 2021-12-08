@@ -19,7 +19,7 @@ import wave
 #  Hotword Not Detected!
 
 wave_file = f'{os.getcwd()}/data/sound/wake-xiaolanxiaolan.wav'
-model_file = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan.umdl'
+model_file = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan-honglei.umdl'
 
 f = wave.open(wave_file)
 assert f.getnchannels() == 1, "Error: Snowboy only supports 1 channel of audio (mono, not stereo)"

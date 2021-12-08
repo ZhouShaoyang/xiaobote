@@ -22,7 +22,7 @@ def interrupt_callback():
 
 
 
-model = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan.umdl'
+model = f'{os.getcwd()}/data/model/wake-xiaolanxiaolan-honglei.umdl'
 
 # capture SIGINT signal, e.g., Ctrl+C
 signal.signal(signal.SIGINT, signal_handler)
