@@ -57,8 +57,8 @@ elif mode == 'REAL':
 
     essay_api = 'http://xiaobot.automc.cn/api/intelligent/write/article/loudspeaker/box/create?title='
     essay_api_domain = 'http://essays.automc.cn/#/article?id='
-    poster_api = 'http://xiaobot.automc.cn/api/intelligent/write/article/loudspeaker/box/create?title='
-    poster_api_domain = 'http://essays.automc.cn/#/article?id='
+    # poster_api = 'http://xiaobot.automc.cn/api/intelligent/write/article/loudspeaker/box/create?title='
+    # poster_api_domain = 'http://essays.automc.cn/#/article?id='
 
 else:
     print('网页模式错误，需要选择FAKE数据或REAL数据。')

@@ -122,8 +122,13 @@ def loop():
         elif aimod_demo_essay_qselzn.check(order_essay):
             browser.open(page.demo_essay_qselzn)
         else:
-            requests.get(page.essay_api)
-            browser.open(page.essay_result)
+            try:
+                response = requests.get(page.essay_api + order_essay).json()
+                did = response.get('data').get('id')
+                browser.open(page.essay_api_domain + did)
+            except Exception:
+                ais.play(audiofile=f'{os.getcwd()}/data/sound/error_essay.pcm')
+                browser.open(page.cale_month)
     # 海报模块
     elif aimod_poster.check(order_deep1):
         browser.open(page.poster)
