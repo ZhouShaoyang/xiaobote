@@ -170,12 +170,12 @@ else:
 
 if __name__ == "__main__":
     ais = AiSound()
-    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/wake-xiaolanxiaolan.wav')
+    # ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/wake-xiaolanxiaolan.wav')
     # ais.text2sound(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm', text='这是1个文本转语音示例。')
     # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_tts.pcm')
-    # ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm', recordtime=2)
-    # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
-    # ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm', recordtime=4)
+    ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
+    ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/demo_record.pcm')
 
     # ais.record(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm', recordtime=2)
     # ais.play(audiofile=f'{os.getcwd()}/data/sound/demo_海报.pcm')

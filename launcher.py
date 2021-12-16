@@ -77,7 +77,7 @@ def loop():
     time.sleep(0.3)
     browser.open(page.listening)
     # 记录听取内容
-    ais.record(audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm', recordtime=5)
+    ais.record(audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm', recordtime=3)
     order_deep1 = ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/order_deep1.pcm')
     print(order_deep1)
     # 日期模块
@@ -112,7 +112,7 @@ def loop():
     # 随笔模块
     elif aimod_essay.check(order_deep1):
         browser.open(page.essay)
-        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_essay.pcm', recordtime=8)
+        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_essay.pcm', recordtime=5)
         browser.open(page.loading)
         order_essay = ais.sound2text(audiofile=f'{os.getcwd()}/data/sound/order_essay.pcm')
         if aimod_demo_essay_lbxygsn.check(order_essay):
@@ -127,7 +127,7 @@ def loop():
     # 海报模块
     elif aimod_poster.check(order_deep1):
         browser.open(page.poster)
-        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_poster.pcm', recordtime=8)
+        ais.record(audiofile=f'{os.getcwd()}/data/sound/order_poster.pcm', recordtime=5)
         browser.open(page.loading)
         requests.get(page.poster_api)
         browser.open(page.poster_result)
